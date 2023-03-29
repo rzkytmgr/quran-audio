@@ -1,5 +1,4 @@
 import Ffmpeg from 'fluent-ffmpeg';
-import path from 'path';
 
 export const recitationCutter = (data : { fullAudiopath: string; ayaaFullAudioPath: string; startTime: string; endTime: string}) => {
   return new Promise((resolve, reject) => {

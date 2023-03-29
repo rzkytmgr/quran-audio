@@ -1,2 +1,2 @@
 export * from './IRecitators';
-export * from './IRecitationMap';
+export * from './IRecitationSuraa';

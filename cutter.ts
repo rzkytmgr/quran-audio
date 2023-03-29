@@ -1,40 +1,33 @@
 import path from 'path';
 import fs from 'node:fs';
 import { recitators } from '@/recitators';
-import { IRecitationMap } from '@/interfaces';
+import { IRecitationSuraa } from '@/interfaces';
 import { recitationCutter } from '@/lib/recitationCutter';
 import { audioAyaaFilenameFormatter } from '@/helper/audioAyaaFilenameFormatter';
 
 
 // audio cutter per aya function
 const initializer = async () => {
-  const currentWorkingDirectory = process.cwd();
-  
+  const currentDirectory = process.cwd();
   for (const [index, recitator] of recitators.entries()) {
-    console.log(index + 1, 'Recitator:', recitator.name, '(', recitator.map, ')');
-    const mappingFilepath = path.join(currentWorkingDirectory, 'mapping', recitator.map + '.json');
-
-    if (!fs.existsSync(mappingFilepath))
+    console.log('[', index + 1, ']', 'Recitator:', recitator.name, '(', recitator.map, ')');
+    
+    const recitationFileMapping = path.join(currentDirectory, 'mapping', recitator.map + '.json');
+    if (!fs.existsSync(recitationFileMapping))
       continue;
 
-    const audioCuttingMap: IRecitationMap = JSON.parse(fs.readFileSync(mappingFilepath, 'utf-8'));
-    
-    for (const suraa of audioCuttingMap.suraa) {
-      console.log('[', suraa.id, ']', 'Cutting total', suraa.schema.length, 'ayaa in', audioCuttingMap.directory);
-      const fullSuraaAudio = path.join(currentWorkingDirectory, 'public', audioCuttingMap.directory, 'suraa_' + suraa.id + '.mp3');
+    const recitationMapping: IRecitationSuraa[] = JSON.parse(fs.readFileSync(recitationFileMapping, 'utf-8'));
+    for (const suraa of recitationMapping) {
+      console.log('@:', suraa.id, 'cut to', suraa.schema.length, 'verses');
+      const audioPath = path.join(currentDirectory, 'public', recitator.dir);
 
       for (const ayaa of suraa.schema) {
-        try {
-          await recitationCutter({
-            fullAudiopath: fullSuraaAudio,
-            ayaaFullAudioPath: audioAyaaFilenameFormatter(suraa.id, ayaa.i, path.dirname(fullSuraaAudio)),
-            startTime: ayaa.s,
-            endTime: ayaa.e,
-          });
-        } catch (err) {
-          console.log('[', suraa.id , ':', ayaa.i,'] Error:', err);
-          continue;
-        }
+        recitationCutter({
+          fullAudiopath: path.join(audioPath, 'suraa_' + suraa.id + '.mp3'),
+          ayaaFullAudioPath: audioAyaaFilenameFormatter(suraa.id, ayaa.i, audioPath),
+          startTime: ayaa.s,
+          endTime: ayaa.e
+        });
       }
     }
   }
