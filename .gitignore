@@ -1,5 +1,0 @@
-dist
-node_modules
-
-public/**/*.mp3
-!public/**/suraa_*.mp3
