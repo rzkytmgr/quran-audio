@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="width=1024">
+  <title>Reciter - Qur'an Recitation Audio Cutter</title>
+  <link rel="stylesheet" href="static/assets/css/app.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+  <nav class="border-b py-3 px-5 flex items-center justify-between sticky top-0 backdrop-blur-xl z-10">
+    <div>
+      <h1><a href="/" class="text-lg font-bold">📣 Recitater - Recitation Cutter</a></h1>
+    </div>
+    <div>
+      <ul class="flex items-center justify-between">
+        <li class="text-sm"><a href="/"><i class='bx bx-coffee mr-2'></i> Github</a></li>
+        <li class="ml-5 text-sm"><a href="/"><i class='bx bx-book-alt m-2'></i> Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="max-w-screen-lg m-auto py-5 px-5">
+    <section class="py-2">
+      <div class="border border-green-900 text-green-900 bg-green-200 px-3 py-2 rounded-lg flex items-center">
+        <i class='bx bx-coffee-togo'></i>
+        <span class="text-sm block ml-3">Click <u>'Capture'</u> button or press <u>'Space'</u> button on your keyboard, to capture the time. <u class="cursor-not-allowed">Click to see more shortcut</u></span></div>
+    </section>
+    <section class="py-2">
+      <div class="grid grid-cols-12 gap-5">
+        <div class="col-span-6">
+          <label for="recitator" class="text-xs text-slate-600">Recitator Name</label>
+          <select name="recitator" id="recitator" class="block bg-white border px-3 py-2 min-w-full my-2 rounded-md outline-slate-300 text-sm text-slate-600">
+            <option selected disabled>Select Recitator</option>
+            <% recitators.forEach((recitator) => { %>
+            <option value="<%= recitator.id %>" data-path="<%= recitator.path.slice(6) %>"><%= recitator.name %></option>
+            <% }) %>
+
+          </select>
+        </div>
+        <div class="col-span-6">
+          <label for="surah" class="text-xs text-slate-600">Surah</label>
+          <select name="surah" id="surah" class="block bg-white border px-3 py-2 min-w-full my-2 rounded-md outline-slate-300 text-sm text-slate-600">
+            <option selected disabled>Select Surah</option>
+            <% surah.forEach((sura) => { %>
+            <option value="<%= sura.id %>" data-ayah="<%= sura.totalAyah %>"><%= sura.id %>. <%= sura.name %> ( <%= sura.arabic %> )</option>
+            <% }) %>
+
+          </select>
+        </div>
+      </div>
+    </section>
+    <section class="py-2">
+      <div class="py-2">
+        <span class="text-xs text-slate-600" id="state">Choose recitator name and surah number</span>
+      </div>
+      <div class="grid grid-cols-12 gap-10 items-center">
+        <div class="col-span-2 flex items-center justify-between">
+          <button id="rewind" class="focus:ring-2 focus:ring-inset focus:ring-slate-200 hover:bg-slate-100 text-slate-900 active:bg-slate-200 rounded-md"><i class='block rounded-md cursor-pointer p-2 text-2xl bx bx-rewind'></i></button>
+          <button id="play" class="focus:ring-2 focus:ring-inset focus:ring-slate-200 hover:bg-slate-100 text-slate-900 active:bg-slate-200 rounded-md"><i class='block rounded-md cursor-pointer p-2 text-2xl bx bx-play'></i></button>
+          <button id="fastforward" class="focus:ring-2 focus:ring-inset focus:ring-slate-200 hover:bg-slate-100 text-slate-900 active:bg-slate-200 rounded-md"><i class='block rounded-md cursor-pointer p-2 text-2xl bx bx-fast-forward'></i></button>
+        </div>
+        <div class="col-span-8 grid grid-cols-12 items-center text-xs">
+          <div class="col-span-2 text-center select-none"><span id="current-time">00:00:00</span></div>
+          <div class="col-span-8 relative">
+            <div id="inner-audio-bar" class="min-w-full h-1 bg-slate-100 rounded-md relative cursor-pointer">
+              <div id="audio-bar" class="h-1 bg-slate-500 rounded-md" style="width: 0%;">
+                <div id="audio-trigger" class="w-3 h-3 bg-slate-500 border-white border rounded-lg absolute cursor-pointer" style="top: -5px; left: 0px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-span-2 text-center select-none"><span id="duration-time">00:00:00</span></div>
+        </div>
+        <div class="col-span-2 flex items-center justify-between">
+          <button id="reset" class="focus:ring-2 focus:ring-inset focus:ring-slate-200 hover:bg-slate-100 text-slate-900 active:bg-slate-200 rounded-md"><i class='block rounded-md cursor-pointer p-2 text-2xl bx bx-refresh'></i></button>
+          <button id="capture-btn" class="text-sm px-4 py-2 rounded-sm bg-green-200 text-green-900 outline-green-300 active:bg-green-300 focus:ring-2 focus:ring-inset focus:ring-green-300">Capture</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-2">
+      <div class="mb-2 flex items-center">
+        <span class="text-xs block text-slate-600">Captured Time</span>
+        <span id="copy-button" class="text-xs ml-4 block text-sm px-2 py-1 cursor-pointer select-none rounded-sm bg-green-200 text-green-900 outline-green-300 active:bg-green-300 focus:ring-2 focus:ring-inset focus:ring-green-300">Copy JSON</span>
+      </div>
+      <div name="" id="captured-time" class="min-w-full grid grid-cols-8 gap-2 text-xs"></div>
+    </section>
+
+    <footer class="relative py-5 text-center">
+      <span class="block text-xs bottom-0 text-slate-600">Maintained by <a class="underline underline-offset-1" href="https://github.com/rzkytmgr">rzkytmgr</a> with ❤️</span>
+    </footer>
+
+    <audio id="recitation-audio" src="" class="hidden"></audio>
+    <textarea name="" id="copy-area" cols="30" rows="10" class="hidden">Hello World1</textarea>
+  </main>
+  <script src="static/assets/js/app.js"></script>
+</body>
+</html>
