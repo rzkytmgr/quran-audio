@@ -1,6 +1,1 @@
 node_modules
-auth.plain
-dist
-yarn-error.log
-.vscode
-.env
